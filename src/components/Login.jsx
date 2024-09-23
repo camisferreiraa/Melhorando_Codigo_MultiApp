@@ -1,86 +1,45 @@
-import { useState } from 'react'; // Importa o hook useState do React
-import styled from 'styled-components'; // Importa styled-components para estilizar os componentes
+import { useState } from 'react';
+import { LoginContainer, LoginForm, Input, Button } from '../styles/Login';
+import { setStorage } from '../localStorage/Local';
 
-// Define o estilo do container principal do login
-const LoginContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f0f0f0;
-`;
-
-// Define o estilo do formulário de login
-const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-`;
-
-// Define o estilo do campo de entrada
-const Input = styled.input`
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 200px;
-`;
-
-// Define o estilo do botão
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-// Componente principal de Login
-// eslint-disable-next-line react/prop-types
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState(''); // Define o estado para o nome de usuário
-  const [password, setPassword] = useState(''); // Define o estado para a senha
+  const [username, setUsername] = useState(''); // Estado para armazenar o nome de usuário
+  const [password, setPassword] = useState(''); // Estado para armazenar a senha
+  const [error, setError] = useState(''); // Estado para capturar erros
 
-  // Função para lidar com o envio do formulário
-  const handleSubmit = (e) => {
+  const handleSubmit = (e) => { // Função para realizar o login com credenciais codificadas
     e.preventDefault(); // Previne o comportamento padrão do formulário
-    if (username === 'admin' && password === 'password') {
+    
+    
+    if (username === 'cami' && password === '123') {
+      setStorage('token', 'dummy-token'); // Armazena um token fictício no localStorage
       onLogin(); // Chama a função onLogin passada como prop se as credenciais estiverem corretas
     } else {
-      alert('Invalid credentials'); // Exibe um alerta se as credenciais estiverem incorretas
-    }
+      setError('Credenciais inválidas'); 
+    } 
   };
 
   return (
     <LoginContainer>
       <LoginForm onSubmit={handleSubmit}>
         <h2>Login</h2>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <Input
           type="text"
-          value={username} // Valor do campo de entrada é ligado ao estado username
-          onChange={(e) => setUsername(e.target.value)} // Atualiza o estado username conforme o usuário digita
-          placeholder="Username" // Placeholder do campo de entrada
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
         />
         <Input
           type="password"
-          value={password} // Valor do campo de entrada é ligado ao estado password
-          onChange={(e) => setPassword(e.target.value)} // Atualiza o estado password conforme o usuário digita
-          placeholder="Password" // Placeholder do campo de entrada
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Senha"
         />
-        <Button type="submit">Login</Button> {/* Botão que envia o formulário */}
+        <Button type="submit">Login</Button>
       </LoginForm>
     </LoginContainer>
   );
 };
 
-export default Login; // Exporta o componente Login como padrão
+export default Login;

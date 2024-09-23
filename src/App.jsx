@@ -1,13 +1,6 @@
 // Importa hooks e componentes do React e bibliotecas externas.
 import { useState, useEffect } from "react";
-import {
-  Route,
-  Routes,
-  Navigate,
-  useNavigate,
-  useLocation,
-  Link,
-} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import styled from "styled-components";
 import {
@@ -175,6 +168,19 @@ const CarouselItem = styled.div`
   }
 `;
 
+const LogoutButton = styled.button`
+  margin-top: 20px;
+  color: white;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+
+  &:hover {
+    color: #ecf0f1;
+  }
+`;
+
 // Estiliza o botão de retorno.
 const ReturnButton = styled.button`
   padding: 10px 20px;
@@ -212,7 +218,7 @@ const App = () => {
 
   // Efeito colateral que redireciona para a página de login se não estiver autenticado.
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && window.location.pathname !== "/") {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
@@ -245,25 +251,17 @@ const App = () => {
     setCurrentComponent(null);
   };
 
-  // Função para renderizar o componente atual com base no estado.
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "QRCodeGenerator":
-        return <QRCodeGenerator />;
-      case "IPAddressFinder":
-        return <IPAddressFinder />;
-      case "MovieSearchEngine":
-        return <MovieSearchEngine />;
-      case "TodoApp":
-        return <TodoApp />;
-      case "QuizApp":
-        return <QuizApp />;
-      case "LanguageTranslator":
-        return <LanguageTranslator />;
-      default:
-        return null;
-    }
+  // troca do switch por objeto
+  const components = {
+    QRCodeGenerator: <QRCodeGenerator />,
+    IPAddressFinder: <IPAddressFinder />,
+    MovieSearchEngine: <MovieSearchEngine />,
+    TodoApp: <TodoApp />,
+    QuizApp: <QuizApp />,
+    LanguageTranslator: <LanguageTranslator />,
   };
+
+  const renderComponent = () => components[currentComponent] || null;
 
   // Renderiza o componente principal.
   return (
@@ -300,88 +298,80 @@ const App = () => {
             </StyledLink>
             <StyledLink onClick={() => handleAccess(5, "LanguageTranslator")}>
               <FaGlobeAmericas />
-              Translator
+              Language Translator
             </StyledLink>
-            <button
-              onClick={handleLogout}
-              style={{
-                marginTop: "20px",
-                color: "white",
-                backgroundColor: "transparent",
-                border: "none",
-              }}
-            >
-              Logout
-            </button>
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
           </NavBar>
+
           <MainContent>
             {currentComponent ? (
               <>
                 {renderComponent()}
                 <ReturnButton onClick={handleReturn}>
-                  <FaArrowLeft /> Return
+                  <FaArrowLeft />
+                  Return to Carousel
                 </ReturnButton>
               </>
             ) : (
               <CarouselContainer>
                 <CustomCarousel
-                  showArrows={true}
-                  infiniteLoop={true}
-                  autoPlay={true}
-                  interval={5000}
+                  showThumbs={false}
                   selectedItem={carouselIndex}
                   onChange={(index) => setCarouselIndex(index)}
+                  infiniteLoop
+                  autoPlay
+                  interval={5000}
+                  showStatus={false}
+                  showArrows
                 >
                   <CarouselItem>
                     <h2>QR Code Generator</h2>
                     <button onClick={() => handleAccess(0, "QRCodeGenerator")}>
-                      Acessar
+                      Access QR Code Generator
                     </button>
                   </CarouselItem>
                   <CarouselItem>
                     <h2>IP Address Finder</h2>
                     <button onClick={() => handleAccess(1, "IPAddressFinder")}>
-                      Acessar
+                      Access IP Address Finder
                     </button>
                   </CarouselItem>
                   <CarouselItem>
                     <h2>Movie Search Engine</h2>
-                    <button
-                      onClick={() => handleAccess(2, "MovieSearchEngine")}
-                    >
-                      Acessar
+                    <button onClick={() => handleAccess(2, "MovieSearchEngine")}>
+                      Access Movie Search Engine
                     </button>
                   </CarouselItem>
                   <CarouselItem>
                     <h2>Todo App</h2>
                     <button onClick={() => handleAccess(3, "TodoApp")}>
-                      Acessar
+                      Access Todo App
                     </button>
                   </CarouselItem>
                   <CarouselItem>
                     <h2>Quiz App</h2>
                     <button onClick={() => handleAccess(4, "QuizApp")}>
-                      Acessar
+                      Access Quiz App
                     </button>
                   </CarouselItem>
                   <CarouselItem>
                     <h2>Language Translator</h2>
-                    <button
-                      onClick={() => handleAccess(5, "LanguageTranslator")}
-                    >
-                      Acessar
+                    <button onClick={() => handleAccess(5, "LanguageTranslator")}>
+                      Access Language Translator
                     </button>
                   </CarouselItem>
                 </CustomCarousel>
               </CarouselContainer>
             )}
-            <Footer>© 2024 Your Company | All rights reserved</Footer>
           </MainContent>
         </>
       )}
+      <Footer>
+        <p>Multi-App Platform &copy; {new Date().getFullYear()}</p>
+      </Footer>
     </AppContainer>
   );
 };
 
-// Exporta o componente App para ser utilizado em outras partes da aplicação.
 export default App;
+
